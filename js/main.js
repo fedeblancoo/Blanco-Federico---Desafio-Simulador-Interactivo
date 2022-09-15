@@ -1,38 +1,34 @@
-let prenda
-
-do {
-  prenda = prompt ("¿Qué prenda vas a comprar hoy? 1. Buzo  2. Remera  3. Pantalón")
-} while (prenda > 4)
-
-
-let cantidad = Number (prompt ("Número de prendas a llevar:"));
-
-
-function pedido () {
-  switch (prenda) {
-    case "1":
-      prenda = "Buzo"
-      precio = cantidad * 2500
-      console.log(`Pedido: buzo. valor $2500 . Cantidad: ${cantidad}. Precio final: $ ${precio}`)
-    break;
-  
-    case "2":
-      prenda = "Remera"
-      precio = cantidad * 1000
-      console.log(`Pedido: remera. Valor $1000 . Cantidad: ${cantidad}. Precio final: $ ${precio}`)
-    break;
-  
-    case "3":
-      prenda = "Pantalón"
-      precio = cantidad * 2900
-      console.log(`Pedido: Pantalon. Valor $2900 . Cantidad: ${cantidad}. Precio final: $ ${precio}`)
-    break;
-  
-    default:
-      console.log("No realizaste ningun pedido")
-    break;
+let inventario = [
+  {
+    id: 1, nombre: "Abrigo", precio: 5000
+  },
+  {
+    id: 2, nombre: "Borcegos", precio: 4100
+  },
+  {
+    id: 3, nombre: "Cartera", precio: 2500
   }
-}
+];
 
 
-pedido ()
+  let prenda = Number (prompt ("¿Qué prenda vas a comprar hoy? Escribe el numero de la opcion deseada: 1-abrigo 2-borcegos 3-cartera"))
+
+  let prendaElegida = inventario.find((e) => e.id === prenda)
+
+  console.log(prendaElegida)
+
+  let total = 0
+
+  
+  let cantidad = Number (prompt ("Número de prendas a llevar:"));
+
+  armarPedido (prenda, cantidad)
+
+  
+  function armarPedido (indice, cantidad) {
+    total = prendaElegida.precio * cantidad
+    if (indice === prendaElegida.id){
+      console.log(`Pedido: ${prendaElegida.nombre}. valor: $ ${prendaElegida.precio} . Cantidad: ${cantidad} Total:${total}`)
+    }
+  }
+
