@@ -31,7 +31,7 @@ const divTotalCarrito = document.getElementById('totalCarrito')
 
 inventario.forEach ((elem) => {
   const divProductos = document.createElement('div')
-  divProductos.classList.add("card", "col-sm-6", "col-lg-4");
+  divProductos.classList.add("card", "col-sm-6", "col-lg-4", "text-bg-white", "border-light");
   divProductos.innerHTML = `
     <img src="${elem.imagen}" class="card-img-top" alt="...">
     <div class="card-body">
@@ -88,22 +88,27 @@ const mostrarCarrito = () => {
 
     const divProductosCarrito = document.createElement('div')
     divProductosCarrito.innerHTML = `
-    <p>Nombre: ${elem.nombre}</p>
-    <p>Precio: ${elem.precio}</p>
-    <p>Cantidad: ${elem.cantidad}</p>
-    <p>Subtotal: ${elem.precio * elem.cantidad}</p>`
+    <p><u>${elem.nombre} </u></p>
+    <p>- Precio: $${elem.precio} -</p>
+    <p>Cantidad: ${elem.cantidad} -</p>
+    <p class="subtotal"><b>Subtotal: ${elem.precio * elem.cantidad}</b></p>
+    <button class="btn btn-black" onClick="borrarProducto()">❌</button>  <hr>`
     ;
 
     divCarrito.appendChild(divProductosCarrito);
   })
 
   divTotalCarrito.innerHTML = `
-  <p> TOTAL: ${total} </p>
+  <p><b> TOTAL: ${total} <b/></p>
   <button class="btn btn-primary" onClick="borrarCarrito()">Borrar Carrito</button>`;
 
 }
 
+//llAMADO A FUNCION DE CHEKEO EN LOCALSTORAGE
+
 productosEnStorage()
+
+// FUNCION BORRAR CARRITO ENTERO
 
 function borrarCarrito(){
   total = 0
@@ -112,3 +117,9 @@ function borrarCarrito(){
   carrito.splice(0,carrito.length);
   localStorage.clear();
 }
+
+//FUNCION BORRAR ELEMENTO
+
+const borrarProducto = () => {
+  
+};
