@@ -1,52 +1,37 @@
-let inventario = [
-  {
-    id: 0, nombre: "Abrigo", precio: 5000, imagen: "./img/abrigo.jpg", cantidad:1
-  },
-  {
-    id: 1, nombre: "Borcegos", precio: 4100, imagen: "./img/borcegos.jpg", cantidad:1
-  },
-  {
-    id: 2, nombre: "Cartera", precio: 2500, imagen: "./img/cartera.jpg", cantidad:1
-  },
-  {
-    id: 3, nombre: "Chaleco", precio: 3500, imagen: "./img/chaleco.jpg", cantidad:1
-  },
-  {
-    id: 4, nombre: "Falda", precio: 3200, imagen: "./img/falda.jpg", cantidad:1
-  },
-  {
-    id: 5, nombre: "Top", precio: 3700, imagen: "./img/top.jpg", cantidad:1
-  }
-];
-
 let total = 0;
-
 let carrito = [];
-
 const divMain = document.getElementById ('container');
 const divCarrito = document.getElementById('carrito');
 const divTotalCarrito = document.getElementById('totalCarrito');
 
+
 //TARJETA DE PRODUCTOS EN EL HTML
 
-inventario.forEach ((elem) => {
-  const divProductos = document.createElement('div');
-  divProductos.classList.add("card", "col-sm-6", "col-lg-4", "text-bg-white", "border-light");
-  divProductos.innerHTML = `
-    <img src="${elem.imagen}" class="card-img-top" alt="...">
-    <div class="card-body">
-      <h5 class="card-title">${elem.nombre}</h5>
-      <p class="card-text">$${elem.precio}.-</p>
-      <button href="#" class="btn btn-primary" id="agregar${elem.id}">Agregar al carrito</button>
-    </div>`
-  divMain.appendChild(divProductos);
+const imprimirProductos = async() => {
+  const datos  = await fetch('../inventario.json');
+  const inventario = await datos.json();
 
-  const boton = document.getElementById(`agregar${elem.id}`);
-
-  boton.addEventListener("click", () => {
-    buscarProducto(elem.id);
+  inventario.forEach ((elem) => {
+    const divProductos = document.createElement('div');
+    divProductos.classList.add("card", "col-sm-6", "col-lg-4", "text-bg-white", "border-light");
+    divProductos.innerHTML = `
+      <img src="${elem.imagen}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">${elem.nombre}</h5>
+        <p class="card-text">$${elem.precio}.-</p>
+        <button href="#" class="btn btn-primary" id="agregar${elem.id}">Agregar al carrito</button>
+      </div>`
+    divMain.appendChild(divProductos);
+  
+    const boton = document.getElementById(`agregar${elem.id}`);
+  
+    boton.addEventListener("click", () => {
+      buscarProducto(elem.id);
+    });
   });
-});
+};
+
+imprimirProductos();
 
 //FUNCION CHEKEO PRODUCTOS EN LOCALSTORAGE
 
@@ -90,7 +75,7 @@ const mostrarCarrito = () => {
     divProductosCarrito.innerHTML = `
     <p><u>${elem.nombre} </u></p>
     <p>- Precio: $${elem.precio} -</p>
-    <p>Cantidad:<button class="btn btn-black" onClick="">➖</button> ${elem.cantidad}<button class="btn btn-black" onClick="">✖️</button>  <hr> -</p>
+    <p>Cantidad:<button class="btn btn-black" onClick="restarCantidad(${elem.id})">➖</button> ${elem.cantidad}<button class="btn btn-black" onClick="sumarCantidad(${elem.id})">✖️</button>  <hr> -</p>
     <p class="subtotal"><b>Subtotal: ${elem.precio * elem.cantidad}</b></p>
     <button class="btn btn-black" onClick="borrarProducto(${elem.id})">❌</button>  <hr>`
     ;
@@ -104,6 +89,32 @@ const mostrarCarrito = () => {
   <button class="btn btn-success" onClick="confirmarCompra()">Confirmar Compra</button>`;
 
 };
+
+// FUNCION DE SUMA DE CANTIDADES EN CARRITO
+
+function sumarCantidad (idProd) { 
+  const objetoClickeado = inventario.find((elem) => elem.id === idProd);
+
+  objetoClickeado.cantidad +=1
+  mostrarCarrito ()
+
+};
+
+// FUNCION DE RESTA DE CANTIDADES EN CARRITO
+
+function restarCantidad (idProd) { 
+  const objetoClickeado = inventario.find((elem) => elem.id === idProd);
+
+  if (objetoClickeado.cantidad > 1) {
+    objetoClickeado.cantidad -=1
+
+    mostrarCarrito ()
+  } else if (objetoClickeado.cantidad === 1) {
+    borrarProducto(idProd)
+  }
+
+};
+
 
 //llAMADO A FUNCION DE CHEKEO EN LOCALSTORAGE
 
@@ -126,11 +137,11 @@ function borrarCarrito(){
       Swal.fire(
         '¡Carrito borrado!'
       )
+      localStorage.clear();
       total = 0;
       divCarrito.innerHTML= "";
       divTotalCarrito.innerHTML = "";
       carrito.splice(0,carrito.length);
-      localStorage.clear();
     }
   })
 };
@@ -140,7 +151,7 @@ function borrarCarrito(){
 const borrarProducto = (idProd) => {
   const elementoAEliminar = carrito.find((e) => e.id === idProd);
 
-  carrito = carrito.filter ((elem) => { return elem !== elementoAEliminar  })
+  carrito = carrito.filter ((elem) => { return elem !== elementoAEliminar})
   console.log(carrito);
 
   mostrarCarrito();

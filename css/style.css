@@ -28,7 +28,7 @@ button {
 
 p {
     display: inline-block;
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 .subtotal {
@@ -38,7 +38,7 @@ p {
 .div-general {
     
     display: grid;
-    grid-template-columns: 60% 40%;
+    grid-template-columns: 55% 45%;
     grid-template-rows: auto;
     grid-template-areas: "tarjetas carrito";
 }
@@ -52,4 +52,10 @@ p {
     border: 1px solid black;
     grid-area: carrito;
     margin-left: 1rem;
+}
+
+@media (max-width: 575px) {
+    .div-general {
+        grid-template-columns: 50% 50%;
+    }
 }
