@@ -47,7 +47,9 @@ function productosEnStorage () {
 
 // FUNCION DE BUSQUEDA DE PRODUCTOS REPETIDOS EN ARRAY CARRITO
 
-const buscarProducto = (idProd) => {
+const buscarProducto = async (idProd) => {
+  const datos  = await fetch('../inventario.json');
+  const inventario = await datos.json();
   const objetoClickeado = inventario.find((elem) => elem.id === idProd);
   const buscarEnCarrito = carrito.find ((e) => {return e.id === objetoClickeado.id});
 
@@ -93,7 +95,7 @@ const mostrarCarrito = () => {
 // FUNCION DE SUMA DE CANTIDADES EN CARRITO
 
 function sumarCantidad (idProd) { 
-  const objetoClickeado = inventario.find((elem) => elem.id === idProd);
+  const objetoClickeado = carrito.find((elem) => elem.id === idProd);
 
   objetoClickeado.cantidad +=1
   mostrarCarrito ()
@@ -103,7 +105,7 @@ function sumarCantidad (idProd) {
 // FUNCION DE RESTA DE CANTIDADES EN CARRITO
 
 function restarCantidad (idProd) { 
-  const objetoClickeado = inventario.find((elem) => elem.id === idProd);
+  const objetoClickeado = carrito.find((elem) => elem.id === idProd);
 
   if (objetoClickeado.cantidad > 1) {
     objetoClickeado.cantidad -=1
@@ -138,10 +140,11 @@ function borrarCarrito(){
         '¡Carrito borrado!'
       )
       localStorage.clear();
-      total = 0;
+      
       divCarrito.innerHTML= "";
       divTotalCarrito.innerHTML = "";
       carrito.splice(0,carrito.length);
+      total = 0;
     }
   })
 };
