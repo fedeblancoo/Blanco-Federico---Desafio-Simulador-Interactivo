@@ -3,7 +3,16 @@ let carrito = [];
 const divMain = document.getElementById ('container');
 const divCarrito = document.getElementById('carrito');
 const divTotalCarrito = document.getElementById('totalCarrito');
+const carritoGeneral = document.getElementById('carritoGeneral');
 
+class Cliente {
+  constructor(nombre, direccion, mail) {
+    this.nombre = nombre;
+    this.direccion = direccion;
+    this.mail = mail;
+    
+  }
+}
 
 //TARJETA DE PRODUCTOS EN EL HTML
 
@@ -57,7 +66,7 @@ const buscarProducto = async (idProd) => {
     carrito.push(objetoClickeado);
     mostrarCarrito();
   } else {
-    objetoClickeado.cantidad +=1
+    buscarEnCarrito.cantidad +=1
     mostrarCarrito();
   };
 };
@@ -87,7 +96,7 @@ const mostrarCarrito = () => {
 
   divTotalCarrito.innerHTML = `
   <p><b> TOTAL: ${total} <b/></p>
-  <button class="btn btn-primary" onClick="borrarCarrito()">Borrar Carrito</button>
+  <button class="btn btn-primary" onClick="alertaBorrarCarrito()">Borrar Carrito</button>
   <button class="btn btn-success" onClick="confirmarCompra()">Confirmar Compra</button>`;
 
 };
@@ -124,7 +133,7 @@ productosEnStorage()
 
 // FUNCION BORRAR CARRITO ENTERO      // SWEETALERT 
 
-function borrarCarrito(){
+function alertaBorrarCarrito(){
   Swal.fire({
     title: '¿Estas seguro que quieres borrar el carrito?',
     text: "",
@@ -137,25 +146,39 @@ function borrarCarrito(){
   }).then((result) => {
     if (result.isConfirmed) {
       Swal.fire(
-        '¡Carrito borrado!'
+        '¡Carrito borrado!',
+         borrarCarrito ()
       )
-      localStorage.clear();
-      
-      divCarrito.innerHTML= "";
-      divTotalCarrito.innerHTML = "";
-      carrito.splice(0,carrito.length);
-      total = 0;
     }
   })
 };
 
+
+function borrarCarrito () {
+  localStorage.clear();
+      
+      carritoGeneral.innerHTML= "";
+      carrito.splice(0,carrito.length);
+      total = 0;
+      console.log(total)
+      
+}
+
 //FUNCION BORRAR ELEMENTO
 
 const borrarProducto = (idProd) => {
-  const elementoAEliminar = carrito.find((e) => e.id === idProd);
+  
+
+if (carrito.length === 1) {
+  borrarCarrito()
+  location.reload()
+  } else {
+    
+    const elementoAEliminar = carrito.find((e) => e.id === idProd);
 
   carrito = carrito.filter ((elem) => { return elem !== elementoAEliminar})
   console.log(carrito);
+  }
 
   mostrarCarrito();
 };
@@ -163,17 +186,58 @@ const borrarProducto = (idProd) => {
 // CONFIRMAR COMPRA 
 
 function confirmarCompra () {
-  Swal.fire({
-    title: 'MUCHAS GRACIAS POR SU COMPRA ❤️',
-    width: 600,
-    padding: '3em',
-    color: '#716add',
-    background: '#fff url(/images/trees.png)',
-    backdrop: `
-      rgba(0,0,123,0.4)
-      url("/images/nyan-cat.gif")
-      left top
-      no-repeat
-    `
+  carritoGeneral.innerHTML = "";
+  div = document.createElement('div')
+
+  div.innerHTML = `
+  <form action="" method="GET" enctype="multipart/form-data">
+        <label for="nombre">Nombre:</label>        
+        <input type="text" placeholder="Nombre" id="nombre">
+            <br>
+        <label for="adress">Dirección:</label>        
+        <input type="text" placeholder="adress" id="adress">
+            <br>
+        <label for="mail">Correo Electrónico:</label>        
+        <input type="text" placeholder="mail" id="mail">
+            <br>
+        
+  </form>
+  <button id="submit">Enviar</button>
+  `;
+
+  carritoGeneral.appendChild (div)
+
+  let submit = document.getElementById('submit')
+
+  
+
+  submit.addEventListener('click', () => {
+    mensajeFinal()
   })
+
 }
+
+mensajeFinal = (cliente) => {
+  let nombre = document.getElementById('nombre').value;
+  let direccion = document.getElementById('adress').value;
+  let mail = document.getElementById('mail').value;
+  let cliente1 = new Cliente (nombre, direccion, mail)
+  console.log(cliente1)
+
+  Swal.fire({
+    title: `MUCHAS GRACIAS ${cliente1.nombre} POR SU COMPRA ❤️. Pronto recibira un correo en ${cliente1.mail} con los detalles del envio a: ${cliente1.direccion}`,
+    icon: 'success',
+    confirmButtonColor: '#3085d6',
+    confirmButtonText: 'Continuar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire(
+        borrarCarrito(),
+        location.reload()
+      )
+    }
+  });
+}
+
+
+
