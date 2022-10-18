@@ -17,7 +17,7 @@ class Cliente {
 //TARJETA DE PRODUCTOS EN EL HTML
 
 const imprimirProductos = async() => {
-  const datos  = await fetch('inventario.json');
+  const datos  = await fetch('../inventario.json');
   const inventario = await datos.json();
 
   inventario.forEach ((elem) => {
